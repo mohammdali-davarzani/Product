@@ -10,9 +10,15 @@ import (
 	"gorm.io/gorm"
 )
 
+type tmp struct {
+	Name  string
+	Price int64
+	Count int64
+}
+
 func GetProducts(c echo.Context, db *gorm.DB) error {
-	products := []models.Product{}
-	db.Find(&products)
+	products := []tmp{}
+	db.Table("products").Select("name", "price", "count").Find(&products)
 	c.Logger().Info("GetProducts endpoint successfully worked")
 	return c.JSON(http.StatusOK, products)
 }
