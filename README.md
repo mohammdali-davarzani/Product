@@ -40,5 +40,5 @@
   ```
 
 # Build and Run 
-``` go build && ./product```
+``` go build && ./shop```
   ## Endpoints available on /docs
