@@ -22,13 +22,13 @@ func CreateProduct(c echo.Context) error {
 
 	actionErr := db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(product).Error; err != nil {
-			return err
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 		return nil
 	})
 
 	if actionErr != nil {
-		return c.JSON(http.StatusInternalServerError, actionErr.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError, actionErr.Error())
 	}
 	return c.JSON(http.StatusCreated, map[string]string{"result": "product created successfully"})
 }
@@ -37,7 +37,7 @@ func GetProduct(c echo.Context) error {
 	productId := c.Param("productID")
 	product := new(Product)
 	if result := db.First(&product, productId); errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "product not found"})
+		return echo.NewHTTPError(http.StatusNotFound, "product not found")
 	}
 	return c.JSON(http.StatusOK, product)
 }
@@ -50,18 +50,18 @@ func UpdateProduct(c echo.Context) error {
 	}
 	var orgProduct = new(Product)
 	if result := db.First(&orgProduct, productId); errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "product not found"})
+		return echo.NewHTTPError(http.StatusNotFound, "product not found")
 	}
 
 	actionErr := db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Model(orgProduct).Updates(product).Error; err != nil {
-			return err
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 		return nil
 	})
 
 	if actionErr != nil {
-		return c.JSON(http.StatusInternalServerError, actionErr.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError, actionErr.Error())
 	}
 
 	return c.JSON(http.StatusOK, orgProduct)
@@ -71,18 +71,18 @@ func DeleteProduct(c echo.Context) error {
 	productId := c.Param("productID")
 	product := new(Product)
 	if result := db.First(&product, productId); errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "product not found"})
+		return echo.NewHTTPError(http.StatusNotFound, "product not found")
 	}
 
 	actionErr := db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Delete(product).Error; err != nil {
-			return err
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 		return nil
 	})
 
 	if actionErr != nil {
-		return c.JSON(http.StatusInternalServerError, actionErr.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError, actionErr.Error())
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{"result": "Product successfuly deleted."})
