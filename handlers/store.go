@@ -1,22 +1,24 @@
-package main
+package handlers
 
 import (
 	"errors"
 	"net/http"
 
+	"shop/models"
+
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
-func GetProducts(c echo.Context) error {
-	products := []Product{}
+func GetProducts(c echo.Context, db *gorm.DB) error {
+	products := []models.Product{}
 	db.Find(&products)
 	c.Logger().Info("GetProducts endpoint successfully worked")
 	return c.JSON(http.StatusOK, products)
 }
 
-func CreateProduct(c echo.Context) error {
-	product := new(Product)
+func CreateProduct(c echo.Context, db *gorm.DB) error {
+	product := new(models.Product)
 	if err := c.Bind(product); err != nil {
 		c.Logger().Error(err)
 		return echo.NewHTTPError(http.StatusNotFound, err)
@@ -39,9 +41,9 @@ func CreateProduct(c echo.Context) error {
 	return c.JSON(http.StatusCreated, map[string]string{"result": "product created successfully"})
 }
 
-func GetProduct(c echo.Context) error {
+func GetProduct(c echo.Context, db *gorm.DB) error {
 	productId := c.Param("productID")
-	product := new(Product)
+	product := new(models.Product)
 	if result := db.First(&product, productId); errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		c.Logger().Error(result.Error)
 		return echo.NewHTTPError(http.StatusNotFound, "product not found")
@@ -51,14 +53,14 @@ func GetProduct(c echo.Context) error {
 	return c.JSON(http.StatusOK, product)
 }
 
-func UpdateProduct(c echo.Context) error {
+func UpdateProduct(c echo.Context, db *gorm.DB) error {
 	productId := c.Param("productID")
-	product := new(Product)
+	product := new(models.Product)
 	if err := c.Bind(product); err != nil {
 		c.Logger().Error(err)
 		return echo.NewHTTPError(http.StatusNotFound, err)
 	}
-	var orgProduct = new(Product)
+	var orgProduct = new(models.Product)
 	if result := db.First(&orgProduct, productId); errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		c.Logger().Error(result.Error)
 		return echo.NewHTTPError(http.StatusNotFound, "product not found")
@@ -81,9 +83,9 @@ func UpdateProduct(c echo.Context) error {
 	return c.JSON(http.StatusOK, orgProduct)
 }
 
-func DeleteProduct(c echo.Context) error {
+func DeleteProduct(c echo.Context, db *gorm.DB) error {
 	productId := c.Param("productID")
-	product := new(Product)
+	product := new(models.Product)
 	if result := db.First(&product, productId); errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		c.Logger().Error(result.Error)
 		return echo.NewHTTPError(http.StatusNotFound, "product not found")
