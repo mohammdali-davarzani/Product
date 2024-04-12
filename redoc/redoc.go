@@ -33,7 +33,7 @@ func Endpoints(c echo.Context) error {
 		OperationID: "Get all products",
 	}
 	createProduct := &openapi3.Operation{
-		OperationID: "Get all products",
+		OperationID: "Add new product",
 	}
 	getProduct := &openapi3.Operation{
 		OperationID: "Get product by id",
