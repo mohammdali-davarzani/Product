@@ -1,5 +1,5 @@
-#Install pre-requirements
-  ##Postgres 
+# Install pre-requirements
+  ## Postgres 
   ```dcoker-compose.yml
   version: '3'
   services:
@@ -29,8 +29,8 @@
     pgdata:
   ```
 
-#Config Project
-  ##Create .env file
+# Config Project
+  ## Create .env file
   ```.env
   DB_HOST=127.0.0.1
   DB_PORT=5432
@@ -39,5 +39,5 @@
   DB_NAME=Product
   ```
 
-#Build and Run 
+# Build and Run 
 ``` go build && ./product```
